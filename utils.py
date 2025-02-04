@@ -1,29 +1,25 @@
+# utils.py
 import http.client
 import json
 
-# Establecemos la conexión con el servidor
-conn = http.client.HTTPSConnection("pokeapi.co")
+def get_pokemon_data(pokemon_name):
+    # Establecemos la conexión con el servidor
+    conn = http.client.HTTPSConnection("pokeapi.co")
 
-# Realizamos la solicitud GET para obtener datos de Pikachu
-conn.request("GET", "/api/v2/pokemon/pikachu")
+    # Realizamos la solicitud GET para obtener datos de un Pokémon
+    conn.request("GET", f"/api/v2/pokemon/{pokemon_name}")
 
-# Obtenemos la respuesta
-response = conn.getresponse()
-
-# Verificamos si la solicitud fue exitosa
-if response.status == 200:
-    # Leemos los datos y los decodificamos de JSON a un diccionario de Python
-    data = json.loads(response.read().decode())
-    
-    # Mostrar el nombre del Pokémon
-    print(f"Nombre del Pokémon: {data['name']}")
-    
-    # Mostrar los tipos del Pokémon
-    types = [type_info['type']['name'] for type_info in data['types']]
-    print(f"Tipos: {', '.join(types)}")
-    
-else:
-    print("Error al obtener los datos")
-
-# Cerramos la conexión
-conn.close()
+    # Obtenemos la respuesta
+    response = conn.getresponse()
+    response_data=response.read()
+    print(type(response_data))
+    # Verificamos si la solicitud fue exitosa
+    if response.status == 200:
+        # Leemos los datos y los decodificamos de JSON a un diccionario de Python
+        data = json.loads(response_data.read().decode('UTF-8'))
+        print(type(data))
+        conn.close()  # Cerramos la conexión
+        return data
+    else:
+        conn.close()  # Cerramos la conexión
+        return None  # Devuelve None si ocurre un error
